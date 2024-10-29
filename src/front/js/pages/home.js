@@ -6,22 +6,21 @@ import "../../styles/home.css";
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 	const navigate = useNavigate()
-	const [email, setEmail] = useState("")
-	const [password, setPassword] = useState("")
 
-	const userData = {
-		"email": email,
-		"password": password
-	}
-
-	const sendUserData = async () => {
-		if (email && password) {
-			const result = await actions.login(userData)
-			if (result) {
-				navigate("/private")
-			} else {
-				alert("Credenciales incorrectas")
-			}
+	async function submitForm(e) {
+		e.preventDefault()
+		const formData = new FormData(e.target)
+		const email = formData.get("email")
+		const password = formData.get("password")
+		if (!password || !email) {
+			console.log("datos incompletos")
+		}
+		let success = await actions.loginUser(email, password)
+		if (success) {
+			navigate("/private")
+			console.log("Usuario logueado")
+		} else {
+			console.log("Error en el inicio de sesión")
 		}
 	}
 
@@ -29,32 +28,31 @@ export const Home = () => {
 		<div className="mt-5">
 			<h1 className="text-center">Login</h1>
 			<div className="container-sm" style={{ "width": "50%" }}>
-				<form>
+				<form onSubmit={submitForm}>
 					<div className="form-group mb-3">
-						<label className="mb-2" htmlFor="exampleInputEmail1">Email address</label>
+						<label className="mb-2" htmlFor="email">Email address</label>
 						<input
-							value={email}
-							onChange={e => setEmail(e.target.value)}
 							type="email"
 							className="form-control"
-							id="exampleInputEmail1"
+							id="email"
+							name="email"
 							aria-describedby="emailHelp"
-							placeholder="Enter email" />
+							placeholder="Enter email"
+							required />
 						<small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
 					</div>
 					<div className="form-group mb-4">
-						<label className="text-left mb-2" htmlFor="exampleInputPassword1">Password</label>
+						<label className="text-left mb-2" htmlFor="password">Password</label>
 						<input
-							value={password}
-							onChange={e => setPassword(e.target.value)}
 							type="password"
 							className="form-control"
-							id="exampleInputPassword1"
-							placeholder="Password" />
+							id="password"
+							name="password"
+							placeholder="Password"
+							required />
 					</div>
 					<button
 						type="submit"
-						onClick={() => sendUserData()}
 						className="btn btn-primary">Submit</button>
 				</form>
 			</div>
