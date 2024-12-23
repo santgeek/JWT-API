@@ -16,6 +16,11 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)  
 
+@api.before_request
+def handle_options_request():
+    if request.method == 'OPTIONS':
+        return '', 204
+
 @api.route('/signup', methods=['POST'])
 def signup_user():
     user_data = request.get_json()
@@ -23,7 +28,7 @@ def signup_user():
         return jsonify({"message": "No mail detected"}), 400
     if user_data["password"] is None:
         return jsonify({"message": "No password detected"}), 400
-    user_data["password"]=bcrypt.generate_password_hash(user_data["password"])
+    user_data["password"]=bcrypt.generate_password_hash(user_data["password"]).decode('utf-8')
     print('Insert data password: ', user_data["password"])
     user=User(email=user_data["email"], password=user_data["password"], is_active=True)
     db.session.add(user)

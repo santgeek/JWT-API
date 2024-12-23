@@ -25,10 +25,10 @@ export const Home = () => {
 	}
 
 	return (
-		<div className="mt-5">
+		<div className="container mt-5">
 			<h1 className="text-center">Login</h1>
-			<div className="container-sm" style={{ "width": "50%" }}>
-				<form onSubmit={submitForm}>
+			<div className="row justify-content-center " >
+				<form className="col-12 col-md-4" onSubmit={submitForm}>
 					<div className="form-group mb-3">
 						<label className="mb-2" htmlFor="email">Email address</label>
 						<input
@@ -53,7 +53,8 @@ export const Home = () => {
 					</div>
 					<button
 						type="submit"
-						className="btn btn-primary">Submit</button>
+						className="btn btn-primary">Submit
+					</button>
 				</form>
 			</div>
 		</div>

@@ -12,7 +12,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			// Use getActions to call a function within a fuction
 			signup: async (email, password) => {
-				const response = await fetch("https://crispy-space-dollop-g457746rqxwx2wxg-3001.app.github.dev/api/signup", {
+				const response = await fetch("https://urban-space-engine-5g4xxg5rq4gqfxgv-3001.app.github.dev/api/signup", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ email, password })
@@ -25,11 +25,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			loginUser: async (email, password) => {
-				const response = await fetch("https://crispy-space-dollop-g457746rqxwx2wxg-3001.app.github.dev/api/login", {
+				const response = await fetch("https://urban-space-engine-5g4xxg5rq4gqfxgv-3001.app.github.dev/api/login", {
 					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
-						"Access-Control-Allow-Origin": "*"
+						"Content-Type": "application/json"
 					},
 					body: JSON.stringify({ email, password })
 				})
@@ -43,14 +42,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("No token returned");
 					return false;
 				}
-				console.log(data);
 				setStore({ accessToken: data.token });
 				localStorage.setItem("accessToken", data.token);
 				return true;
 			},
 
-			logout: async () => {
+			privateLink: async () => {
+				const token = localStorage.getItem('accessToken')
+				if (!token) {
+					throw Error("User not logged in!")
+				}
+				const response = await fetch('https://urban-space-engine-5g4xxg5rq4gqfxgv-3000.app.github.dev/private', {
+					method: 'GET',
+					headers: {
+						"Content-Type": "application/json",
+						'Authorization': 'Bearer ' + token
+					}
+				})
+				if (response.ok) {
+					const data = await response.json()
+					return data
+				} else if (response.status === 403) {
+					throw Error("Missing or invalid token")
+				} else {
+					throw Error("Error: " + response.statusText)
+				}
+			},
 
+			logout: async () => {
+				setStore({ accessToken: null })
+				localStorage.removeItem("accessToken")
+				console.log("User logged out successfully")
 			}
 		}
 	};
